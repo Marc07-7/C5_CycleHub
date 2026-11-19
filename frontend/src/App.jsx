@@ -4169,6 +4169,74 @@ export default function App() {
   }
 }
 
+/* FINAL FIX: DESKTOP AND MOBILE NAVIGATION */
+@media (min-width: 761px) {
+  .app .topbar > nav.main-navigation {
+    position: static !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-height: none !important;
+    margin: 0 12px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .app .topbar > nav.main-navigation button {
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .app .topbar > nav.main-navigation {
+    position: absolute !important;
+    top: calc(100% + 7px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    z-index: 120 !important;
+  }
+}
+
+/* MOBILE: REMOVE DUPLICATE HEADER ACTIONS */
+@media (max-width: 760px) {
+  .app .topbar > .head-actions {
+    display: none !important;
+  }
+
+  .app .topbar > .mobile-menu-toggle {
+    display: inline-flex !important;
+  }
+
+  .app .topbar {
+    grid-template-columns: minmax(0, 1fr) 44px !important;
+    align-items: center !important;
+  }
+
+  .app .topbar > .brand {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .app .topbar > .mobile-menu-toggle {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+
+  .app .topbar > nav.main-navigation {
+    top: calc(100% + 7px) !important;
+  }
+}
+
 
 
 
