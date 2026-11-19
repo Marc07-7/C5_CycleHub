@@ -464,6 +464,14 @@ export default function App() {
     return () => window.clearInterval(intervalId)
   }, [user?.id])
 
+  // Close the notification panel with the Escape key.
+  useEffect(() => {
+    if (!showNotifications) return
+    const onKey = e => { if (e.key === 'Escape') setShowNotifications(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [showNotifications])
+
   async function markNotificationRead(id) {
     try {
       await request(`notifications/${id}`, { method: 'PUT' })
@@ -1087,7 +1095,7 @@ export default function App() {
           pushEnabled ? 'Alerts Enabled' : 'Enable Alerts'}
       </button>
 
-      <button onClick={() => {
+      <button className="nav-livechat" onClick={() => {
         setMobileMenuOpen(false)
         setChatOpen(true)
       }}>
@@ -1224,14 +1232,14 @@ export default function App() {
       {user && showNotifications && createPortal(
   <>
     <button
-      className="notification-backdrop"
+      className="notif-overlay"
       type="button"
       aria-label="Close notifications"
       onClick={() => setShowNotifications(false)}
     />
 
     <section
-      className="notification-panel"
+      className="notif-popover"
       aria-label="Notifications"
       role="dialog"
       aria-modal="true"
