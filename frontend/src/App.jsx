@@ -1029,17 +1029,21 @@ export default function App() {
   {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
 </button>
 
+
 <nav className={`main-navigation ${mobileMenuOpen ? 'open' : ''}`}>
+  <button onClick={() => {
+    setView('shop')
+    setMobileMenuOpen(false)
+  }}>
+    <Bike size={17} /> Shop
+  </button>
+
   {user && (
-    <button
-      className="wishlist-nav-link"
-      onClick={() => {
-        setMobileMenuOpen(false)
-        openWishlist()
-      }}
-    >
-      <Heart size={17} />
-      Wishlist ({wishlist.length})
+    <button onClick={() => {
+      setMobileMenuOpen(false)
+      openWishlist()
+    }}>
+      <Heart size={17} /> Wishlist ({wishlist.length})
     </button>
   )}
 
@@ -1047,15 +1051,68 @@ export default function App() {
     setMobileMenuOpen(false)
     openOrders()
   }}>
-    My Orders
+    <ShoppingBag size={17} /> My Orders
   </button>
+
+  <button onClick={() => {
+    setMobileMenuOpen(false)
+    setView('cart')
+  }}>
+    <ShoppingBag size={17} /> Shopping Cart
+    ({cart.reduce((s, p) => s + p.quantity, 0)})
+  </button>
+
+  {user && (
+    <>
+      <button onClick={() => {
+        setMobileMenuOpen(false)
+        setShowNotifications(true)
+        loadNotifications(true)
+      }}>
+        <Bell size={17} /> Notifications
+        {unreadCount > 0 ? ` (${unreadCount})` : ''}
+      </button>
+
+      <button onClick={() => {
+        setMobileMenuOpen(false)
+        enablePushNotifications()
+      }} disabled={pushBusy || pushEnabled}>
+        <Bell size={17} />
+        {pushBusy ? 'Enabling alerts…' :
+          pushEnabled ? 'Alerts Enabled' : 'Enable Alerts'}
+      </button>
+
+      <button onClick={() => {
+        setMobileMenuOpen(false)
+        setChatOpen(true)
+      }}>
+        <MessageCircle size={17} /> Live Chat
+      </button>
+    </>
+  )}
 
   {user?.role === 'admin' && (
     <button onClick={() => {
       setMobileMenuOpen(false)
       openAdmin()
     }}>
-      Admin
+      <User size={17} /> Admin Dashboard
+    </button>
+  )}
+
+  {!user ? (
+    <button onClick={() => {
+      setMobileMenuOpen(false)
+      setView('account')
+    }}>
+      <User size={17} /> Login / Register
+    </button>
+  ) : (
+    <button className="mobile-logout-link" onClick={() => {
+      setMobileMenuOpen(false)
+      logout()
+    }}>
+      <LogOut size={17} /> Logout
     </button>
   )}
 </nav>
@@ -3960,6 +4017,155 @@ export default function App() {
     margin: 10px 0 0 !important;
     justify-content: flex-start !important;
     overflow-x: auto !important;
+  }
+}
+
+
+/* ==========================================
+   C5 CYCLEHUB - COMPLETE MOBILE NAVIGATION
+========================================== */
+
+.mobile-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .app .topbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 44px !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 12px 15px !important;
+    position: relative !important;
+  }
+
+  .app .topbar > .brand {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    margin: 0 !important;
+    min-width: 0;
+  }
+
+  .app .topbar > .mobile-menu-toggle {
+    display: inline-flex !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    position: static !important;
+    align-items: center;
+    justify-content: center;
+    width: 44px !important;
+    height: 44px !important;
+    padding: 0;
+    border: 1px solid #ffffff25;
+    border-radius: 11px;
+    background: #ffffff12;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .app .topbar > .head-actions {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 10px 0 0 !important;
+    gap: 7px !important;
+    overflow: visible !important;
+    border-top: 1px solid #ffffff18;
+  }
+
+  .app .topbar > .head-actions > * {
+    flex: 0 0 auto;
+  }
+
+  .app .topbar .account-identity {
+    order: 0 !important;
+    flex: 1 0 100% !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .app .topbar > nav.main-navigation {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 7px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-height: min(70vh, 560px) !important;
+    overflow-y: auto !important;
+    z-index: 120 !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+    padding: 10px !important;
+    margin: 0 !important;
+    border: 1px solid #ffffff20 !important;
+    border-radius: 15px !important;
+    background: #20262b !important;
+    box-shadow: 0 18px 45px #0005 !important;
+  }
+
+  .app .topbar > nav.main-navigation.open {
+    display: flex !important;
+  }
+
+  .app .topbar > nav.main-navigation button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-height: 46px !important;
+    padding: 11px 13px !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    color: #f4f6f3 !important;
+    text-align: left !important;
+    font-size: 13px !important;
+    white-space: normal !important;
+  }
+
+  .app .topbar > nav.main-navigation button:hover {
+    background: #ffffff12 !important;
+    color: #d6ff3f !important;
+  }
+
+  .app .topbar > nav.main-navigation .mobile-logout-link {
+    margin-top: 6px;
+    border-top: 1px solid #ffffff20;
+    border-radius: 0 0 9px 9px;
+    color: #ff9292 !important;
+  }
+
+  .app .topbar > nav.main-navigation button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+}
+
+@media (min-width: 761px) {
+  .app .topbar > .mobile-menu-toggle {
+    display: none !important;
+  }
+
+  .app .topbar > nav.main-navigation {
+    position: static !important;
+    display: flex !important;
+    width: auto !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    overflow: visible !important;
+    transform: none !important;
   }
 }
 
