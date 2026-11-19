@@ -775,6 +775,108 @@ api.post('/products/:id/restore', requireAdmin, async (req, res, next) => {
   }
 });
 
+
+// ==========================================
+// CUSTOMER WISHLIST
+// ==========================================
+
+// GET CUSTOMER WISHLIST
+api.get('/wishlist', requireUser, async (req, res, next) => {
+  try {
+    const userId = currentUser(req).id;
+
+    const [data] = await pool.query(
+      `SELECT
+         w.id AS wishlist_id,
+         w.created_at AS saved_at,
+         p.id,
+         p.name,
+         p.slug,
+         p.description,
+         p.price,
+         p.stock,
+         p.image_url,
+         p.category_id,
+         c.name AS category_name
+       FROM wishlists w
+       INNER JOIN products p ON p.id = w.product_id
+       LEFT JOIN categories c ON c.id = p.category_id
+       WHERE w.user_id = ?
+         AND p.is_active = 1
+         AND p.is_archived = 0
+       ORDER BY w.created_at DESC`,
+      [userId]
+    );
+
+    ok(res, { data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ADD PRODUCT TO WISHLIST
+api.post('/wishlist', requireUser, async (req, res, next) => {
+  try {
+    const userId = currentUser(req).id;
+    const productId = Number(req.body.product_id);
+
+    if (!Number.isInteger(productId) || productId < 1) {
+      return fail(res, 422, 'A valid product ID is required.');
+    }
+
+    const [products] = await pool.query(
+      `SELECT id
+       FROM products
+       WHERE id = ?
+         AND is_active = 1
+         AND is_archived = 0
+       LIMIT 1`,
+      [productId]
+    );
+
+    if (!products.length) {
+      return fail(res, 404, 'Product not found or unavailable.');
+    }
+
+    await pool.query(
+      `INSERT IGNORE INTO wishlists (user_id, product_id)
+       VALUES (?, ?)`,
+      [userId, productId]
+    );
+
+    ok(res, {
+      message: 'Product saved to your wishlist.'
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// REMOVE PRODUCT FROM WISHLIST
+api.delete('/wishlist/:productId', requireUser, async (req, res, next) => {
+  try {
+    const userId = currentUser(req).id;
+    const productId = Number(req.params.productId);
+
+    if (!Number.isInteger(productId) || productId < 1) {
+      return fail(res, 422, 'A valid product ID is required.');
+    }
+
+    await pool.query(
+      `DELETE FROM wishlists
+       WHERE user_id = ? AND product_id = ?`,
+      [userId, productId]
+    );
+
+    ok(res, {
+      message: 'Product removed from your wishlist.'
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 // GET PRODUCTS
 api.get('/products', async (req, res, next) => {
   try {
