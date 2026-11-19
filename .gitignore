@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+**/dist/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Local configuration
+backend/config/config.php
+backend/config/database.php
+
+# Backend private files
+backend-node/certs/
+
+# Private database backup
+/database/c5_cyclehub.sql
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
