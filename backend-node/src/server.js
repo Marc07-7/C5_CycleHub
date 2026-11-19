@@ -445,15 +445,29 @@ api.get('/health', async (req, res) => {
 });
 
 // CSRF
-api.get('/auth/csrf', (req, res) => {
+
+// CSRF
+api.get('/auth/csrf', (req, res, next) => {
   if (!req.session.csrfToken) {
     req.session.csrfToken = crypto.randomBytes(32).toString('hex');
   }
 
-  ok(res, {
-    csrf_token: req.session.csrfToken
+  const csrfToken = req.session.csrfToken;
+
+  // Explicitly persist the session before sending the token.
+  req.session.save(error => {
+    if (error) {
+      return next(error);
+    }
+
+    res.setHeader('Cache-Control', 'no-store');
+
+    return ok(res, {
+      csrf_token: csrfToken
+    });
   });
 });
+
 
 // WEB PUSH: PUBLIC VAPID KEY
 api.get('/push/vapid-public-key', (req, res) => {
