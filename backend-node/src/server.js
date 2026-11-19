@@ -34,6 +34,7 @@ if (process.env.SESSION_SECRET.length < 32) {
 }
 
 const app = express();
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 const allowedOrigins = (
@@ -448,27 +449,24 @@ api.get('/health', async (req, res) => {
 
 // CSRF
 api.get('/auth/csrf', (req, res, next) => {
-  if (!req.session.csrfToken) {
-    req.session.csrfToken = crypto.randomBytes(32).toString('hex');
-  }
-
-  const csrfToken = req.session.csrfToken;
-
-  // Explicitly persist the session before sending the token.
-  req.session.save(error => {
-    if (error) {
-      return next(error);
+    if (!req.session.csrfToken) {
+        req.session.csrfToken = crypto.randomBytes(32).toString('hex');
     }
 
-    res.setHeader('Cache-Control', 'no-store');
+    const csrfToken = req.session.csrfToken;
 
-    return ok(res, {
-      csrf_token: csrfToken
+    req.session.save((error) => {
+        if (error) {
+            return next(error);
+        }
+
+        res.setHeader('Cache-Control', 'no-store');
+
+        return ok(res, {
+            csrf_token: csrfToken
+        });
     });
-  });
 });
-
-
 // WEB PUSH: PUBLIC VAPID KEY
 api.get('/push/vapid-public-key', (req, res) => {
   if (!pushEnabled) {
