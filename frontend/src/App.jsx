@@ -23,7 +23,9 @@ import {
   CheckCheck,
   Heart,
   Menu,
-  X
+  X,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 
 const money = n =>
@@ -87,6 +89,8 @@ export default function App() {
     email: '',
     password: ''
   })
+
+  const [showPassword, setShowPassword] = useState(false)
 
   const [productForm, setProductForm] = useState({
     name: '',
@@ -651,20 +655,26 @@ export default function App() {
 
   // REMOVE A SAVED PRODUCT
   async function removeFromWishlist(productId) {
-    try {
-      await request(`wishlist/${productId}`, {
-        method: 'DELETE'
-      })
-
-      setWishlist(old =>
-        old.filter(item => Number(item.id) !== Number(productId))
-      )
-
-      flash('Product removed from wishlist.')
-    } catch (error) {
-      flash(error.message || 'Unable to remove product.')
-    }
+  if (!user?.id) {
+    setView('account')
+    flash('Please sign in to manage your wishlist.')
+    return
   }
+
+  try {
+    await request(`wishlist/${productId}`, {
+      method: 'DELETE'
+    })
+
+    setWishlist(old =>
+      old.filter(item => Number(item.id) !== Number(productId))
+    )
+
+    flash('Product removed from wishlist.')
+  } catch (error) {
+    flash(error.message || 'Unable to remove product.')
+  }
+}
 
 
   const total = cart.reduce(
@@ -1020,13 +1030,6 @@ export default function App() {
 </button>
 
 <nav className={`main-navigation ${mobileMenuOpen ? 'open' : ''}`}>
-  <button onClick={() => {
-    setView('shop')
-    setMobileMenuOpen(false)
-  }}>
-    Shop
-  </button>
-
   {user && (
     <button
       className="wishlist-nav-link"
@@ -1441,7 +1444,7 @@ export default function App() {
 
   {/* WISHLIST PAGE */}
   {view === 'wishlist' && (
-    <main className="shop-main">
+    <main className="shop-main wishlist-page">
       <div className="section-head">
         <div>
           <span className="eyebrow">YOUR SAVED ITEMS</span>
@@ -1474,9 +1477,9 @@ export default function App() {
           </button>
         </div>
       ) : (
-        <div className="products">
+       <div className="products wishlist-products">
           {wishlist.map(p => (
-            <article className="product" key={p.id}>
+            <article className="product wishlist-product" key={p.id}>
               <div className="product-image">
                 {p.image_url ? (
                   <img src={p.image_url} alt={p.name} />
@@ -1582,23 +1585,39 @@ export default function App() {
                 }
               />
             </label>
+<label className="password-label">
+  Password
 
-            <label>
-              Password
+  <div className="password-input-wrapper">
+    <input
+      type={showPassword ? 'text' : 'password'}
+      minLength="8"
+      required
+      value={form.password}
+      onChange={e =>
+        setForm({
+          ...form,
+          password: e.target.value
+        })
+      }
+      placeholder="Enter your password"
+    />
 
-              <input
-                type="password"
-                minLength="8"
-                required
-                value={form.password}
-                onChange={e =>
-                  setForm({
-                    ...form,
-                    password: e.target.value
-                  })
-                }
-              />
-            </label>
+    <button
+      type="button"
+      className="password-toggle"
+      onClick={() => setShowPassword(prev => !prev)}
+      aria-label={showPassword ? 'Hide password' : 'Show password'}
+      title={showPassword ? 'Hide password' : 'Show password'}
+    >
+      {showPassword
+        ? <EyeOff size={19} />
+        : <Eye size={19} />
+      }
+    </button>
+  </div>
+</label>
+
 
             <button
               className="primary"
@@ -3644,6 +3663,306 @@ export default function App() {
     display: none !important;
   }
 }
+
+/* =========================================
+   C5 CYCLEHUB - WISHLIST PAGE REDESIGN
+========================================= */
+
+.wishlist-page {
+  width: 100%;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+  box-sizing: border-box;
+  min-height: 65vh;
+}
+
+.wishlist-page .section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.wishlist-page .section-head h2 {
+  margin: 8px 0;
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 800;
+}
+
+.wishlist-page .section-head p {
+  margin: 0;
+  color: #778078;
+}
+
+/* Responsive product grid */
+.wishlist-products {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* Individual wishlist card */
+.wishlist-products .wishlist-product {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #e6eae3;
+  box-shadow: 0 8px 24px rgba(20, 30, 20, 0.045);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.wishlist-products .wishlist-product:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 32px rgba(20, 30, 20, 0.09);
+}
+
+/* Consistent image dimensions */
+.wishlist-products .wishlist-product .product-image {
+  width: 100%;
+  height: 240px;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #f4f6f1;
+}
+
+.wishlist-products .wishlist-product .product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* Product information */
+.wishlist-products .wishlist-product .product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+  gap: 12px;
+}
+
+.wishlist-products .wishlist-product .product-info h3 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.wishlist-products .wishlist-product .product-info p {
+  color: #849087;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.wishlist-products .wishlist-product .product-bottom {
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.wishlist-products .wishlist-product .wishlist-remove {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 8px;
+  border: 1px solid #f0dada;
+  border-radius: 10px;
+  background: #fff5f5;
+  color: #c43d3d;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+
+.wishlist-products .wishlist-product .wishlist-remove:hover {
+  background: #dc3f3f;
+  color: #ffffff;
+}
+
+/* Empty wishlist */
+.wishlist-page > .empty {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 55px 24px;
+  border: 1px solid #e8ece5;
+  border-radius: 22px;
+  background: #ffffff;
+  text-align: center;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+  .wishlist-products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .wishlist-page {
+    padding: 30px 16px 55px;
+  }
+
+  .wishlist-page .section-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .wishlist-products {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .wishlist-products .wishlist-product .product-image {
+    height: 230px;
+    min-height: 230px;
+  }
+}
+
+
+/* PASSWORD VISIBILITY TOGGLE */
+
+.password-label {
+  display: block;
+  width: 100%;
+}
+
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 52px !important;
+  box-sizing: border-box;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #778078;
+  cursor: pointer;
+  transition: color .2s ease, background .2s ease;
+}
+
+.password-toggle:hover {
+  color: #202827;
+  background: #eff2e9;
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid #c8ff32;
+  outline-offset: 2px;
+}
+
+
+/* =========================================
+   FINAL HEADER ALIGNMENT FIX
+========================================= */
+
+.topbar {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  position: relative !important;
+  gap: 0 !important;
+}
+
+/* Keep the logo at the far left */
+.topbar > .brand {
+  flex: 0 0 auto !important;
+  margin-right: 14px !important;
+}
+
+/* Keep hamburger beside the logo */
+.topbar > .mobile-menu-toggle {
+  position: relative !important;
+  inset: auto !important;
+  order: 0 !important;
+  flex: 0 0 44px !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+}
+
+/* Keep the dropdown anchored below the header */
+.topbar > nav.main-navigation {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  left: 190px !important;
+  right: auto !important;
+  width: 260px !important;
+  z-index: 110 !important;
+}
+
+/* Push account/cart controls to the right */
+.topbar > .head-actions {
+  flex: 0 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  overflow: visible !important;
+}
+
+/* Mobile adjustment */
+@media (max-width: 760px) {
+  .topbar {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    gap: 0 !important;
+  }
+
+  .topbar > .brand {
+    margin-right: 12px !important;
+  }
+
+  .topbar > .mobile-menu-toggle {
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .topbar > nav.main-navigation {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+  }
+
+  .topbar > .head-actions {
+    flex: 1 0 100% !important;
+    width: 100% !important;
+    margin: 10px 0 0 !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+  }
+}
+
 
 
 
