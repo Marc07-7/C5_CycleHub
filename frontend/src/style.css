@@ -983,3 +983,297 @@ footer .brand{width:max-content;margin:0 auto}
     max-height: calc(100dvh - 155px) !important;
   }
 }
+
+/* C5 CYCLEHUB — DESKTOP HEADER CORRECTION */
+
+@media (min-width: 761px) {
+  .app .topbar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-height: 82px !important;
+    height: auto !important;
+    padding: 12px 24px !important;
+  }
+
+  .app .topbar > .brand {
+    order: 1 !important;
+    flex: 0 0 auto !important;
+  }
+
+  .app .topbar > nav.main-navigation {
+    order: 2 !important;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Remove controls duplicated in the action toolbar. */
+  .app .topbar > nav.main-navigation > button:nth-child(4),
+  .app .topbar > nav.main-navigation > button:nth-child(5),
+  .app .topbar > nav.main-navigation > button:nth-child(6),
+  .app .topbar > nav.main-navigation > button:last-child {
+    display: none !important;
+  }
+
+  .app .topbar > nav.main-navigation > button {
+    flex: 0 1 auto !important;
+    padding: 9px 7px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  .app .topbar > .head-actions {
+    order: 3 !important;
+    flex: 0 0 auto !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 7px !important;
+    width: auto !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+}
+
+/* ==========================================
+   C5 CYCLEHUB - CLEAN HEADER FIX
+   Desktop: one horizontal row
+   Mobile: brand + hamburger menu
+========================================== */
+
+.app .topbar {
+  position: relative;
+  z-index: 200;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 78px;
+  height: auto;
+  padding: 12px clamp(16px, 3vw, 40px);
+  overflow: visible;
+}
+
+.app .topbar > .brand {
+  flex: 0 0 auto;
+  min-width: max-content;
+}
+
+.app .topbar > .mobile-menu-toggle {
+  display: none;
+}
+
+.app .topbar > nav.main-navigation {
+  position: static;
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.app .topbar > nav.main-navigation > button {
+  flex: 0 1 auto;
+  padding: 9px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.app .topbar > .head-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  overflow: visible;
+}
+
+.app .notification-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Notification trigger */
+.app .notification-trigger {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid #ffffff20;
+  border-radius: 10px;
+  background: #ffffff10;
+  color: white;
+  cursor: pointer;
+}
+
+.app .notification-trigger:hover {
+  background: #ffffff20;
+}
+
+/* Mobile menu button */
+.app .mobile-menu-toggle {
+  display: none;
+}
+
+/* ==========================================
+   MOBILE HEADER
+========================================== */
+
+@media (max-width: 760px) {
+  .app .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    align-items: center;
+    gap: 10px;
+    min-height: 68px;
+    padding: 10px 14px;
+  }
+
+  .app .topbar > .brand {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .app .topbar > .mobile-menu-toggle {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid #ffffff25;
+    border-radius: 11px;
+    background: #ffffff12;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* Hide the desktop action toolbar on mobile. */
+  .app .topbar > .head-actions {
+    display: none !important;
+  }
+
+  /* Single vertical hamburger menu */
+  .app .topbar > nav.main-navigation {
+    display: none !important;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 12px;
+    right: 12px;
+    z-index: 220;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 5px;
+    width: auto;
+    max-height: min(70vh, 560px);
+    padding: 12px;
+    overflow-y: auto;
+    border: 1px solid #ffffff20;
+    border-radius: 14px;
+    background: #20262b;
+    box-shadow: 0 18px 45px #0007;
+  }
+
+  .app .topbar > nav.main-navigation.open {
+    display: flex !important;
+  }
+
+  .app .topbar > nav.main-navigation > button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 11px;
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 12px;
+    border-radius: 9px;
+    color: #f4f6f3;
+    background: transparent;
+    font-size: 13px;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .app .topbar > nav.main-navigation > button:hover {
+    background: #ffffff12;
+    color: #d6ff3f;
+  }
+}
+
+/* ==========================================
+   NOTIFICATION PORTAL
+   Renders independently of header/menu
+========================================== */
+
+.notification-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9000 !important;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: rgba(0, 0, 0, .38);
+}
+
+.notification-panel {
+  position: fixed !important;
+  z-index: 9001 !important;
+  top: 88px;
+  right: 24px;
+  left: auto;
+  width: min(390px, calc(100vw - 28px));
+  max-height: min(70vh, 600px);
+  overflow-y: auto;
+  border: 1px solid #e5e9ed;
+  border-radius: 15px;
+  background: white;
+  color: #172033;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, .22);
+}
+
+@media (max-width: 760px) {
+  .notification-panel {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 100px);
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (max-width: 360px) {
+  .notification-panel {
+    width: calc(100vw - 16px);
+  }
+}

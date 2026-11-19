@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { MessageCircle } from 'lucide-react'
 import ChatWidget from './components/ChatWidget'
 import PWAInstallButton from './components/PWAInstallButton'
@@ -1165,18 +1166,18 @@ export default function App() {
           </button>
 
           {user && (
-            <div className="notification-wrap">
-              <button
-                className="notification-trigger"
-                type="button"
-                aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ''}`}
-                aria-expanded={showNotifications}
-                title="Notifications"
-                onClick={() => {
-                  setShowNotifications(value => !value)
-                  if (!showNotifications) loadNotifications(true)
-                }}
-              >
+  <div className="notification-wrap">
+    <button
+      className="notification-trigger"
+      type="button"
+      aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ''}`}
+      aria-expanded={showNotifications}
+      title="Notifications"
+      onClick={() => {
+        setShowNotifications(value => !value)
+        if (!showNotifications) loadNotifications(true)
+      }}
+    >
                 <Bell size={21} />
                 {unreadCount > 0 && (
                   <span className="notification-count">
@@ -1185,7 +1186,7 @@ export default function App() {
                 )}
               </button>
 
-              {showNotifications && (
+               {(
                 <>
                   <button
                     className="notification-backdrop"
@@ -1309,6 +1310,107 @@ export default function App() {
 
         </div>
       </header>
+
+      {user && showNotifications && createPortal(
+  <>
+    <button
+      className="notification-backdrop"
+      type="button"
+      aria-label="Close notifications"
+      onClick={() => setShowNotifications(false)}
+    />
+
+    <section
+      className="notification-panel"
+      aria-label="Notifications"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="notification-header">
+        <div>
+          <b>Notifications</b>
+          <small>
+            {unreadCount
+              ? `${unreadCount} unread`
+              : 'You are all caught up'}
+          </small>
+        </div>
+
+        <div className="notification-header-actions">
+          {unreadCount > 0 && (
+            <button
+              type="button"
+              className="notification-read-all"
+              onClick={markAllNotificationsRead}
+            >
+              <CheckCheck size={15} />
+              Mark all read
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="notification-close"
+            aria-label="Close notifications"
+            onClick={() => setShowNotifications(false)}
+          >
+            <X size={18} />
+          </button>
+        </div>
+      </div>
+
+      <div className="notification-list">
+        {notificationsLoading && notifications.length === 0 ? (
+          <p className="notification-empty">
+            Loading notifications...
+          </p>
+        ) : notifications.length === 0 ? (
+          <p className="notification-empty">
+            No notifications yet.
+          </p>
+        ) : (
+          notifications.map(notification => (
+            <button
+              type="button"
+              key={notification.id}
+              className={`notification-item ${
+                Number(notification.is_read) === 0 ? 'unread' : ''
+              }`}
+              onClick={() => openNotification(notification)}
+            >
+              <span className="notification-dot" />
+
+              <span className="notification-content">
+                <b>{notification.title}</b>
+                <span>{notification.body}</span>
+                <small>
+                  {notification.created_at
+                    ? new Date(
+                        notification.created_at.replace(' ', 'T')
+                      ).toLocaleString()
+                    : ''}
+                </small>
+              </span>
+            </button>
+          ))
+        )}
+      </div>
+
+      <div className="notification-footer">
+        <button
+          type="button"
+          onClick={() => {
+            setShowNotifications(false)
+            openOrders()
+          }}
+        >
+          View my orders
+        </button>
+      </div>
+    </section>
+  </>,
+  document.body
+)}
 
       {chatOpen && user && (
         <ChatWidget user={user} onClose={() => setChatOpen(false)} />
