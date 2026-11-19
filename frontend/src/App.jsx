@@ -458,7 +458,7 @@ export default function App() {
 
     const intervalId = window.setInterval(() => {
       loadNotifications()
-    }, 30000)
+    }, 5000)
 
     return () => window.clearInterval(intervalId)
   }, [user?.id])
