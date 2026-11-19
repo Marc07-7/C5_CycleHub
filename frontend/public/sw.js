@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'c5-cyclehub-v8';
+const CACHE_VERSION = 'c5-cyclehub-v9';
 const APP_CACHE = `${CACHE_VERSION}-app`;
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
@@ -6,27 +6,68 @@ const DB_NAME = 'c5-cyclehub-offline';
 const DB_VERSION = 2;
 const ORDER_QUEUE_STORE = 'orderQueue';
 
+// Essential application shell only.
+// Vite-generated JS and CSS are cached dynamically.
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest.webmanifest',
+  './manifest.webmanifest'
+];
 
-  // Production React application
-  './assets/index-CwSZI9jJ.js',
-  './assets/index-GdAm3C7y.css',
-
-  // PWA icons
+const OPTIONAL_ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png'
 ];
+
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(APP_CACHE)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
+    (async () => {
+      const appCache = await caches.open(APP_CACHE);
+
+      // These are essential for the offline application shell.
+      await appCache.addAll(APP_SHELL);
+
+      // Icons are optional; their absence must not block installation.
+      const staticCache = await caches.open(STATIC_CACHE);
+
+      await Promise.all(
+        OPTIONAL_ASSETS.map(async asset => {
+          try {
+            const response = await fetch(asset);
+
+            if (response.ok) {
+              await staticCache.put(asset, response);
+            }
+          } catch (error) {
+            console.warn('Optional PWA asset unavailable:', asset);
+          }
+        })
+      );
+
+      await self.skipWaiting();
+    })()
   );
 });
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys =>
+        Promise.all(
+          keys
+            .filter(key =>
+              key.startsWith('c5-cyclehub-') &&
+              key !== APP_CACHE &&
+              key !== STATIC_CACHE
+            )
+            .map(key => caches.delete(key))
+        )
+      )
+      .then(() => self.clients.claim())
+  );
+});
+
 
 self.addEventListener('activate', event => {
   event.waitUntil(
