@@ -742,3 +742,244 @@ footer .brand{width:max-content;margin:0 auto}
   .account-identity-text b{max-width:calc(100vw - 92px)}
   .head-actions .pwa-install-btn,.head-actions .pwa-installed{display:none!important}
 }
+
+/* =====================================================
+   C5 CYCLEHUB — FINAL RESPONSIVE HEADER FIX
+   Desktop spacing, mobile navigation and notifications
+===================================================== */
+
+/* Desktop header */
+@media (min-width: 761px) {
+  .app .topbar {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 18px !important;
+    width: 100%;
+    height: auto !important;
+    min-height: 82px;
+    padding: 12px clamp(18px, 3vw, 48px) !important;
+  }
+
+  .app .topbar > .brand {
+    min-width: max-content;
+  }
+
+  .app .topbar > nav.main-navigation {
+    position: static !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-width: 0;
+    width: auto !important;
+    gap: 3px !important;
+    overflow: visible !important;
+  }
+
+  .app .topbar > nav.main-navigation > button {
+    flex: 0 1 auto !important;
+    padding: 9px 10px !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+  }
+
+  .app .topbar > .head-actions {
+    display: flex !important;
+    flex: 0 1 auto !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 7px !important;
+    width: auto !important;
+    min-width: 0;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .app .topbar .head-actions > * {
+    flex-shrink: 0;
+  }
+
+  .app .mobile-menu-toggle {
+    display: none !important;
+  }
+
+  .app .notification-wrap {
+    position: relative !important;
+    z-index: 100;
+  }
+
+  .app .notification-panel {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    left: auto !important;
+    width: min(390px, calc(100vw - 30px)) !important;
+    max-height: min(70vh, 600px);
+    overflow-y: auto !important;
+    z-index: 120 !important;
+  }
+}
+
+/* Tablet and mobile header */
+@media (max-width: 760px) {
+  .app .topbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 42px !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100%;
+    height: auto !important;
+    min-height: 70px;
+    padding: 12px 14px !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  .app .topbar > .brand {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    font-size: 15px !important;
+  }
+
+  .app .mobile-menu-toggle {
+    display: grid !important;
+    grid-column: 2;
+    grid-row: 1;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #ffffff25;
+    border-radius: 11px;
+    background: #ffffff12;
+    color: white;
+  }
+
+  /* Keep the menu as one clean vertical list. */
+  .app .topbar > nav.main-navigation {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-height: min(70vh, 560px);
+    overflow-y: auto !important;
+    padding: 12px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+    background: #20262b !important;
+    border: 1px solid #ffffff16;
+    border-radius: 15px !important;
+    box-shadow: 0 18px 45px #0007;
+    z-index: 150 !important;
+  }
+
+  .app .topbar > nav.main-navigation.open {
+    display: flex !important;
+  }
+
+  .app .topbar > nav.main-navigation > button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-height: 43px;
+    padding: 11px 12px !important;
+    border-radius: 9px !important;
+    text-align: left !important;
+    white-space: normal !important;
+    color: #f4f6f3 !important;
+    background: transparent !important;
+    font-size: 13px !important;
+  }
+
+  .app .topbar > nav.main-navigation > button:hover,
+  .app .topbar > nav.main-navigation > button:focus-visible {
+    background: #ffffff12 !important;
+    color: #d6ff3f !important;
+  }
+
+  /* Compact action toolbar below the brand. */
+  .app .topbar > .head-actions {
+    grid-column: 1 / -1 !important;
+    grid-row: 2;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 9px 0 0 !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    scrollbar-width: none;
+    border-top: 1px solid #ffffff18;
+  }
+
+  .app .topbar > .head-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .app .topbar > .head-actions > * {
+    flex: 0 0 auto !important;
+  }
+
+  /* Avoid duplicating menu actions in the toolbar. */
+  .app .topbar > .head-actions .push-enable-btn,
+  .app .topbar > .head-actions .chat-launch-btn,
+  .app .topbar > .head-actions .user-btn {
+    display: none !important;
+  }
+
+  /* Notifications panel must remain usable on phones. */
+  .app .notification-wrap {
+    position: static !important;
+  }
+
+  .app .notification-panel {
+    position: fixed !important;
+    top: 145px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100dvh - 170px) !important;
+    overflow-y: auto !important;
+    border-radius: 15px !important;
+    z-index: 300 !important;
+  }
+
+  .app .notification-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 250 !important;
+    background: #0005 !important;
+  }
+
+  .app .notification-trigger {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 420px) {
+  .app .topbar {
+    padding: 10px 12px !important;
+  }
+
+  .app .notification-panel {
+    top: 135px !important;
+    left: 8px !important;
+    right: 8px !important;
+    max-height: calc(100dvh - 155px) !important;
+  }
+}

@@ -1064,14 +1064,18 @@ export default function App() {
 
   {user && (
     <>
-      <button onClick={() => {
-        setMobileMenuOpen(false)
-        setShowNotifications(true)
-        loadNotifications(true)
-      }}>
-        <Bell size={17} /> Notifications
-        {unreadCount > 0 ? ` (${unreadCount})` : ''}
-      </button>
+      <button
+  type="button"
+  onClick={async () => {
+    setMobileMenuOpen(false)
+    setShowNotifications(true)
+    await loadNotifications(true)
+  }}
+>
+  <Bell size={17} />
+  Notifications
+  {unreadCount > 0 ? ` (${unreadCount})` : ''}
+</button>
 
       <button onClick={() => {
         setMobileMenuOpen(false)
