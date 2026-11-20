@@ -111,35 +111,36 @@ export default function App() {
     setTimeout(() => setNotice(''), 3500)
   }
 
+  // PWA INSTALL (burger menu)
   const [installEvent, setInstallEvent] = useState(null)
 
-const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
-const isStandalone =
-  window.matchMedia('(display-mode: standalone)').matches ||
-  navigator.standalone === true
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    navigator.standalone === true
 
-useEffect(() => {
-  const onPrompt = e => { e.preventDefault(); setInstallEvent(e) }
-  const onInstalled = () => setInstallEvent(null)
-  window.addEventListener('beforeinstallprompt', onPrompt)
-  window.addEventListener('appinstalled', onInstalled)
-  return () => {
-    window.removeEventListener('beforeinstallprompt', onPrompt)
-    window.removeEventListener('appinstalled', onInstalled)
-  }
-}, [])
+  useEffect(() => {
+    const onPrompt = e => { e.preventDefault(); setInstallEvent(e) }
+    const onInstalled = () => setInstallEvent(null)
+    window.addEventListener('beforeinstallprompt', onPrompt)
+    window.addEventListener('appinstalled', onInstalled)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onPrompt)
+      window.removeEventListener('appinstalled', onInstalled)
+    }
+  }, [])
 
-async function installApp() {
-  if (installEvent) {
-    installEvent.prompt()
-    await installEvent.userChoice
-    setInstallEvent(null)
-  } else if (isIOS) {
-    alert('To install: tap the Share button, then "Add to Home Screen".')
-  } else {
-    alert('To install: open your browser menu (⋮) and tap "Install app" or "Add to Home screen".')
+  async function installApp() {
+    if (installEvent) {
+      installEvent.prompt()
+      await installEvent.userChoice
+      setInstallEvent(null)
+    } else if (isIOS) {
+      alert('To install: tap the Share button, then "Add to Home Screen".')
+    } else {
+      alert('To install: open your browser menu (⋮) and tap "Install app" or "Add to Home screen".')
+    }
   }
-}
 
   // LOAD PRODUCTS, CATEGORIES AND AUTHENTICATION INDEPENDENTLY
   async function load() {
@@ -1071,21 +1072,22 @@ async function installApp() {
 
 
 <nav className={`main-navigation ${mobileMenuOpen ? 'open' : ''}`}>
-  <button onClick={() => {
-    setView('shop')
-    setMobileMenuOpen(false)
-  }}>
 
-     {user && (
+  {user && (
     <div className="mobile-account-info">
       <span className="account-avatar"><User size={16} /></span>
-      <span>
+      <span className="mobile-account-text">
         <small>Signed in as</small>
         <b>{user.name || user.email || `User #${user.id}`}</b>
         {user.name && user.email && <em>{user.email}</em>}
       </span>
     </div>
   )}
+
+  <button onClick={() => {
+    setView('shop')
+    setMobileMenuOpen(false)
+  }}>
     <Bike size={17} /> Shop
   </button>
 
@@ -1097,8 +1099,6 @@ async function installApp() {
       <Heart size={17} /> Wishlist ({wishlist.length})
     </button>
   )}
-
-   
 
   <button onClick={() => {
     setMobileMenuOpen(false)
@@ -1116,13 +1116,13 @@ async function installApp() {
   </button>
 
   {!isStandalone && (
-  <button onClick={() => {
-    setMobileMenuOpen(false)
-    installApp()
-  }}>
-    <Download size={17} /> Install App
-  </button>
-)}
+    <button onClick={() => {
+      setMobileMenuOpen(false)
+      installApp()
+    }}>
+      <Download size={17} /> Install App
+    </button>
+  )}
 
   {user && (
     <>
@@ -4314,6 +4314,7 @@ async function installApp() {
   }
 }
 
+/* MOBILE: ORDER DETAILS FULL-SCREEN SHEET */
 @media (max-width: 760px) {
   .order-detail {
     position: fixed !important;
@@ -4326,35 +4327,81 @@ async function installApp() {
     padding: 20px 16px 40px !important;
   }
 }
-.mobile-account-info { display: none; }
+
+/* MOBILE MENU: SIGNED-IN ACCOUNT BLOCK */
+.mobile-account-info {
+  display: none;
+}
 
 @media (max-width: 760px) {
-  .mobile-account-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 13px;
-    margin-bottom: 4px;
-    border-bottom: 1px solid #ffffff20;
-    color: #f4f6f3;
+  .app .topbar > nav.main-navigation .mobile-account-info {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    padding: 12px 13px !important;
+    margin: 0 0 4px !important;
+    border-bottom: 1px solid #ffffff20 !important;
+    color: #f4f6f3 !important;
+    box-sizing: border-box;
   }
-  .mobile-account-info > span:last-child {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
+
+  .app .topbar > nav.main-navigation .mobile-account-info .account-avatar {
+    flex: 0 0 34px !important;
+    width: 34px !important;
+    height: 34px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 10px !important;
+    background: #c3f45b !important;
+    color: #172020 !important;
   }
-  .mobile-account-info small {
-    color: #9aa7a0;
-    font-size: 10px;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+
+  .app .topbar > nav.main-navigation .mobile-account-text {
+    display: grid !important;
+    gap: 2px !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    text-align: left !important;
   }
-  .mobile-account-info b { font-size: 13px; overflow-wrap: anywhere; }
-  .mobile-account-info em {
-    font-style: normal;
-    font-size: 11px;
-    color: #9aa7a0;
-    overflow-wrap: anywhere;
+
+  .app .topbar > nav.main-navigation .mobile-account-text small {
+    color: #9aa7a0 !important;
+    font-size: 10px !important;
+    letter-spacing: .08em !important;
+    text-transform: uppercase !important;
+  }
+
+  .app .topbar > nav.main-navigation .mobile-account-text b {
+    font-size: 14px !important;
+    color: #ffffff !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .app .topbar > nav.main-navigation .mobile-account-text em {
+    font-style: normal !important;
+    font-size: 11px !important;
+    color: #9aa7a0 !important;
+    overflow-wrap: anywhere !important;
+  }
+}
+
+/* MOBILE: "ADDED TO CART" AND OTHER TOASTS ALWAYS VISIBLE */
+@media (max-width: 760px) {
+  .toast {
+    position: fixed !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: 24px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 100000 !important;
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    text-align: center;
+    pointer-events: none;
   }
 }
 
