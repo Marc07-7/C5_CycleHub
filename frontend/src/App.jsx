@@ -135,7 +135,9 @@ async function installApp() {
     await installEvent.userChoice
     setInstallEvent(null)
   } else if (isIOS) {
-    flash('Tap the Share button, then "Add to Home Screen".')
+    alert('To install: tap the Share button, then "Add to Home Screen".')
+  } else {
+    alert('To install: open your browser menu (⋮) and tap "Install app" or "Add to Home screen".')
   }
 }
 
@@ -1085,6 +1087,17 @@ async function installApp() {
     </button>
   )}
 
+    {user && (
+    <div className="mobile-account-info">
+      <span className="account-avatar"><User size={16} /></span>
+      <span>
+        <small>Signed in as</small>
+        <b>{user.name || user.email || `User #${user.id}`}</b>
+        {user.name && user.email && <em>{user.email}</em>}
+      </span>
+    </div>
+  )}
+
   <button onClick={() => {
     setMobileMenuOpen(false)
     openOrders()
@@ -1100,7 +1113,7 @@ async function installApp() {
     ({cart.reduce((s, p) => s + p.quantity, 0)})
   </button>
 
-  {!isStandalone && (installEvent || isIOS) && (
+  {!isStandalone && (
   <button onClick={() => {
     setMobileMenuOpen(false)
     installApp()
@@ -4311,7 +4324,37 @@ async function installApp() {
     padding: 20px 16px 40px !important;
   }
 }
+.mobile-account-info { display: none; }
 
+@media (max-width: 760px) {
+  .mobile-account-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 13px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #ffffff20;
+    color: #f4f6f3;
+  }
+  .mobile-account-info > span:last-child {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  .mobile-account-info small {
+    color: #9aa7a0;
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .mobile-account-info b { font-size: 13px; overflow-wrap: anywhere; }
+  .mobile-account-info em {
+    font-style: normal;
+    font-size: 11px;
+    color: #9aa7a0;
+    overflow-wrap: anywhere;
+  }
+}
 
 
       `}</style>
