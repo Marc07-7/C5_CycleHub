@@ -1075,6 +1075,17 @@ async function installApp() {
     setView('shop')
     setMobileMenuOpen(false)
   }}>
+
+     {user && (
+    <div className="mobile-account-info">
+      <span className="account-avatar"><User size={16} /></span>
+      <span>
+        <small>Signed in as</small>
+        <b>{user.name || user.email || `User #${user.id}`}</b>
+        {user.name && user.email && <em>{user.email}</em>}
+      </span>
+    </div>
+  )}
     <Bike size={17} /> Shop
   </button>
 
@@ -1087,16 +1098,7 @@ async function installApp() {
     </button>
   )}
 
-    {user && (
-    <div className="mobile-account-info">
-      <span className="account-avatar"><User size={16} /></span>
-      <span>
-        <small>Signed in as</small>
-        <b>{user.name || user.email || `User #${user.id}`}</b>
-        {user.name && user.email && <em>{user.email}</em>}
-      </span>
-    </div>
-  )}
+   
 
   <button onClick={() => {
     setMobileMenuOpen(false)
