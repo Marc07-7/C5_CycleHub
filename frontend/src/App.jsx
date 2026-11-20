@@ -26,7 +26,8 @@ import {
   Menu,
   X,
   Eye,
-  EyeOff
+  EyeOff,
+  Download
 } from 'lucide-react'
 
 const money = n =>
@@ -109,6 +110,34 @@ export default function App() {
     setNotice(message)
     setTimeout(() => setNotice(''), 3500)
   }
+
+  const [installEvent, setInstallEvent] = useState(null)
+
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+const isStandalone =
+  window.matchMedia('(display-mode: standalone)').matches ||
+  navigator.standalone === true
+
+useEffect(() => {
+  const onPrompt = e => { e.preventDefault(); setInstallEvent(e) }
+  const onInstalled = () => setInstallEvent(null)
+  window.addEventListener('beforeinstallprompt', onPrompt)
+  window.addEventListener('appinstalled', onInstalled)
+  return () => {
+    window.removeEventListener('beforeinstallprompt', onPrompt)
+    window.removeEventListener('appinstalled', onInstalled)
+  }
+}, [])
+
+async function installApp() {
+  if (installEvent) {
+    installEvent.prompt()
+    await installEvent.userChoice
+    setInstallEvent(null)
+  } else if (isIOS) {
+    flash('Tap the Share button, then "Add to Home Screen".')
+  }
+}
 
   // LOAD PRODUCTS, CATEGORIES AND AUTHENTICATION INDEPENDENTLY
   async function load() {
@@ -1070,6 +1099,15 @@ export default function App() {
     <ShoppingBag size={17} /> Shopping Cart
     ({cart.reduce((s, p) => s + p.quantity, 0)})
   </button>
+
+  {!isStandalone && (installEvent || isIOS) && (
+  <button onClick={() => {
+    setMobileMenuOpen(false)
+    installApp()
+  }}>
+    <Download size={17} /> Install App
+  </button>
+)}
 
   {user && (
     <>
@@ -4261,6 +4299,18 @@ export default function App() {
   }
 }
 
+@media (max-width: 760px) {
+  .order-detail {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 200 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    overflow-y: auto !important;
+    background: #fff !important;
+    padding: 20px 16px 40px !important;
+  }
+}
 
 
 
